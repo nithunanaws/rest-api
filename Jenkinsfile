@@ -11,5 +11,13 @@ pipeline {
 				}
 			}
 		}
+		stage('image') {
+			steps {
+				sh "chmod +x gradlew"				
+				withGradle {					
+					sh './gradlew jibDockerBuild'
+				}
+			}
+		}
 	}
 }
