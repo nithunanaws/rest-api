@@ -2,7 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.6.3'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
-	id 'com.google.cloud.tools.jib' version '1.8.0'
+	id 'com.google.cloud.tools.jib' version '3.2.0'
 }
 
 group = 'com.nithunan'
@@ -18,30 +18,19 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-application {
-    mainClassName = 'com.nithunan.RestApiApplication'
-}
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.nithunan.RestApiApplication'
-    }
-}
-
 tasks.named('test') {
 	useJUnitPlatform()
 }
 
 jib {
-    from {
-        image = 'adoptopenjdk:11.0.5_10-jre-hotspot-bionic'
-    }
-
-    to {
-        image = "nithunan/${project.name}:${project.version}"
-    }
-    
-    container {
-        creationTime = 'USE_CURRENT_TIMESTAMP'
-    }
+	to {
+		image = "springboot-nithunan:${project.version}"		
+	}
+	container {
+		jvmFlags = ['-Xms512m', '-Xdebug', '-Dserver.port=9000']
+		mainClass = 'com.nithunan.RestApiApplication'
+		args = []
+		ports = ['9000']
+		labels = [maintainer: 'nithunan']
+	}
 }

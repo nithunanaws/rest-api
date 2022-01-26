@@ -1,22 +1,19 @@
 pipeline {
 	agent {
-		label 'slave'
+		label 'docker-dind'
 	}
-	stages {
-		stage('build') {
+	stages {		
+		stage('Build Image') {
 			steps {
 				sh "chmod +x gradlew"				
 				withGradle {					
-					sh './gradlew clean build'
+					sh './gradlew clean build jibDockerBuild'
 				}
 			}
 		}
-		stage('image') {
+		stage('Delpoy') {
 			steps {
-				sh "chmod +x gradlew"				
-				withGradle {					
-					sh './gradlew jibDockerBuild'
-				}
+				sh 'docker run -d --name springboot-nithunan -p 9000:9000 springboot-nithunan:1.0.0-SNAPSHOT'
 			}
 		}
 	}
